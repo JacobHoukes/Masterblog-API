@@ -99,5 +99,21 @@ def search_posts():
     return jsonify(matching_posts), 200
 
 
+@app.route('/api/posts', methods=['GET'])
+def list_posts():
+    """This function returns all blog posts, with optional sorting by title or content."""
+    sort = request.args.get('sort')
+    direction = request.args.get('direction')
+    sorted_posts = POSTS.copy()
+    if sort:
+        if sort not in ['title', 'content']:
+            return jsonify({"error": "Invalid sort field. Use 'title' or 'content'."}), 400
+        if direction and direction not in ['asc', 'desc']:
+            return jsonify({"error": "Invalid direction. Use 'asc' or 'desc'."}), 400
+        reverse = (direction == 'desc')
+        sorted_posts.sort(key=lambda post: post.get(sort, '').lower(), reverse=reverse)
+    return jsonify(sorted_posts), 200
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5002, debug=True)
