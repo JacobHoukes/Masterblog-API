@@ -17,11 +17,6 @@ def generate_new_id():
     return max(post["id"] for post in POSTS) + 1
 
 
-@app.route("/api/posts", methods=["GET"])
-def get_posts():
-    return jsonify(POSTS)
-
-
 @app.route("/api/posts", methods=["POST"])
 def add_post():
     """This function adds a new blog post if valid title and content are provided."""
@@ -101,18 +96,18 @@ def search_posts():
 
 @app.route('/api/posts', methods=['GET'])
 def list_posts():
-    """This function returns all blog posts, with optional sorting by title or content."""
+    """This function returns all blog posts, optionally sorted by title or content."""
     sort = request.args.get('sort')
     direction = request.args.get('direction')
-    sorted_posts = POSTS.copy()
+    posts_to_return = POSTS.copy()
     if sort:
         if sort not in ['title', 'content']:
             return jsonify({"error": "Invalid sort field. Use 'title' or 'content'."}), 400
         if direction and direction not in ['asc', 'desc']:
             return jsonify({"error": "Invalid direction. Use 'asc' or 'desc'."}), 400
         reverse = (direction == 'desc')
-        sorted_posts.sort(key=lambda post: post.get(sort, '').lower(), reverse=reverse)
-    return jsonify(sorted_posts), 200
+        posts_to_return.sort(key=lambda post: post[sort].lower(), reverse=reverse)
+    return jsonify(posts_to_return), 200
 
 
 if __name__ == "__main__":
