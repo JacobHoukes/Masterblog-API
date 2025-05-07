@@ -5,6 +5,7 @@ app = Flask(__name__)
 
 @app.route('/', methods=['GET'])
 def home():
+    """This function renders the homepage."""
     return render_template("index.html")
 
 
